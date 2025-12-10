@@ -174,6 +174,7 @@
   "lastOpenFiles": [
     "秘籍/0.前端三面通关秘籍.md",
     "秘籍/复习.md",
+    "README.md",
     "秘籍/3.⚡ 前端性能优化调度 API.md",
     "秘籍/2.🌐 浏览器渲染原理与性能机制.md",
     "秘籍/1. 🧠 浏览器多线程与事件循环机制详解.md",
@@ -187,7 +188,6 @@
     "cursor/vue-common-rules.md",
     "nuxt/组件生命周期钩子.md",
     "报价单.md",
-    "README.md",
     "报价单-压缩价格.md",
     "three.js/坐标控制器和轨道控制器.md",
     "three.js",
