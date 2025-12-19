@@ -1,0 +1,14 @@
+{
+  "blue-topaz-theme@@background-settings-workplace-background-image": false,
+  "blue-topaz-theme@@background-image-settings-switch": false,
+  "blue-topaz-theme@@toggle-nonoverlapping-bg": false,
+  "blue-topaz-theme@@background-notebook-liked-switch": false,
+  "blue-topaz-theme@@color-scheme-options": "color-scheme-options-avocado-topaz",
+  "blue-topaz-theme@@clutter-free-headings": false,
+  "blue-topaz-theme@@funny-header-anim": false,
+  "blue-topaz-theme@@remove-heading-indicator": false,
+  "blue-topaz-theme@@retain-header-color": false,
+  "blue-topaz-theme@@tag-click": false,
+  "Blue-Topaz-Codebox-Highlight@@code-box-style-option": "codebox-frosted-glass",
+  "Blue-Topaz-Codebox-Highlight@@muted-code-activeline-bg": true
+}
