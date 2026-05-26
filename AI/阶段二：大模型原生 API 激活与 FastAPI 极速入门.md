@@ -1,0 +1,197 @@
+
+> 本阶段目标:用 FastAPI 搭一个能对接多家大模型、支持流式、结构化输出、工具调用、可观测、生产级容错的"AI 网关式后端"。
+
+---
+
+### 1-1 SDK 接入与异步客户端【必学】
+
+**学习重点:**
+
+- `openai.AsyncOpenAI` / `anthropic.AsyncAnthropic` / `google-genai`(Gemini)
+- `base_url` 指向兼容服务(vLLM、SGLang、Ollama、DeepSeek、Moonshot、智谱)
+- `timeout` / `max_retries` / `httpx` 自定义 transport
+- 连接池与 keep-alive
+- `asyncio` 基础:`async/await` / `gather` / `create_task` / `TaskGroup`
+- `Semaphore` 控制并发
+- 流式 `chat.completions.create(stream=True)`
+- `litellm` 统一抽象:一行代码切 100+ 模型
+- OpenAI SDK 作为通用客户端(接所有兼容服务的事实标准)
+- 代理与企业网络:`HTTPS_PROXY` / 自签证书 / 内网网关
+
+**理解:**
+
+- 同一份代码切换 OpenAI / DeepSeek / Qwen / 本地 vLLM 的关键参数
+- 为什么 AI 后端必须是异步(IO 等待 vs 计算)
+
+---
+
+### 1-2 Prompt 工程基础【必学】
+
+**学习重点:**
+
+- 角色体系:system / user / assistant / tool
+- system prompt 分层(角色 + 任务 + 约束 + 输出格式 + 示例)
+- Few-shot 示例注入
+- Chain of Thought(显式 vs 让模型内部思考)
+- ReAct(Thought / Action / Observation 循环 —— 阶段二预热)
+- XML 标签结构化 prompt(Anthropic 风格)
+- 动态变量注入与模板引擎(`Jinja2` / f-string)
+- **Prompt Caching**(Anthropic `cache_control` / OpenAI 自动 / DeepSeek `cached_tokens`)—— 成本下降 50%+ 的关键
+- 推理模型的 prompt 差异:R1 / o-系列不需要 CoT 提示,反而要"直接说要什么"
+- Prompt 安全:Prompt Injection / Jailbreak / 输入消毒边界
+
+**理解:**
+
+- Prompt 模板化与版本管理(可用 `promptflow` / `langfuse prompts`)
+- Prompt 压缩(`LLMLingua`)的使用场景
+
+---
+
+### 1-3 结构化输出与 Pydantic v2【必学】🔥
+
+**学习重点:**
+
+- Pydantic v2:`BaseModel` / `Field` / `Literal` / `Enum` / 嵌套模型
+- `model_validate` / `model_dump` / `model_json_schema`
+- OpenAI `response_format={"type": "json_schema", "json_schema": {...}, "strict": True}`
+- OpenAI / Anthropic 的 Tool Use 即一种结构化输出
+- 本地模型的结构化输出方案:`outlines` / `xgrammar` / vLLM `guided_json`
+- `instructor` 库:把 Pydantic + LLM 结构化输出做到极致
+
+**理解:**
+
+- 三种结构化输出层级:
+    1. Prompt 约束(最弱)
+    2. JSON Mode(保证合法 JSON,不保证 schema)
+    3. Strict JSON Schema / Guided Decoding(保证 schema)
+- 结构化输出失败的兜底:重试 + schema 修复
+
+---
+
+### 1-4 Function Calling / Tool Use 入门【必学】
+
+**学习重点:**
+
+- `tools=[...]` / `tool_choice` 参数
+- 工具定义的 JSON Schema 形态
+- `tool_calls` 响应的解析与执行
+- 多轮工具调用循环(模型调工具 → 执行 → `role:tool` 回填 → 模型继续)
+- 并行工具调用(parallel tool calls)
+
+**理解:**
+
+- 工具调用与结构化输出本质同源
+- 工具描述就是 prompt,描述好坏直接决定调用质量
+- 与 MCP 协议的关系预告(阶段二深入)
+
+---
+
+### 1-5 Token 与上下文管理【必学】
+
+**学习重点:**
+
+- `tiktoken`(OpenAI)/ 各家模型自带 tokenizer
+- token 统计与成本估算
+- 滑动窗口 / 历史截断 / 摘要压缩三种策略
+- `usage` 字段:`prompt_tokens` / `completion_tokens` / `cached_tokens` / `reasoning_tokens`
+
+**理解:**
+
+- 中文 token 特点(1 汉字 ≈ 1-2 tokens,因模型而异)
+- 长上下文性能衰减("Lost in the Middle")
+- **Prompt Caching 命中率优化**:静态内容前置、动态内容后置
+- 输入 token 与输出 token 单价差异巨大(影响架构决策)
+
+---
+
+### 1-6 流式输出与异步生成器【必学】
+
+**学习重点:**
+
+- Python `async def` + `yield` 异步生成器
+- `async for chunk in stream`
+- chunk 结构解析:`delta.content` / `delta.tool_calls` / `delta.reasoning_content`
+- 流式工具调用拼接(`index` 分片 + 累加 arguments)
+- 流式中的错误处理(中途断流、超时)
+- 推理模型流式:`reasoning_content`(思考过程)与 `content`(最终答案)分离处理
+
+**理解:**
+
+- 流式 markdown 增量渲染的常见坑(代码块未闭合、表格半截)
+- 流式响应生命周期
+
+---
+
+### 1-7 FastAPI 后端骨架【必学】⚡
+
+**学习重点:**
+
+- `APIRouter` 模块化、`Depends` 依赖注入
+- `lifespan` 上下文管理器(替代旧 `on_event`),初始化共享 AsyncOpenAI 客户端、数据库连接池
+- Pydantic 请求/响应模型
+- `CORSMiddleware` 跨域配置
+- 中间件:请求日志、耗时统计、trace_id 注入
+- 全局异常处理器(`exception_handler`)
+- `BackgroundTasks` 后台任务
+- `uvicorn` 启动参数,`gunicorn + uvicorn worker` 生产部署
+- 将 LLM 客户端通过 `Depends` 注入,避免每个请求新建
+- 请求级 trace_id 贯穿(用于阶段五的可观测)
+
+**理解:**
+
+- AI 后端与传统后端在生命周期、长连接、并发模型上的差异
+
+---
+
+### 1-8 SSE 流式接口设计【必学】
+
+**学习重点:**
+
+- `StreamingResponse(media_type="text/event-stream")`
+- SSE 格式:`event:` / `data:` / `id:` / `retry:`
+- 心跳保活(避免代理超时)
+- 浏览器 `EventSource` vs `fetch + ReadableStream`(前者不支持 POST)
+- 客户端断开检测(`request.is_disconnected()`)
+- 异常中断的优雅关闭
+- 前后端事件协议设计:`message` / `reasoning` / `tool_call` / `tool_result` / `usage` / `error` / `done`
+
+**理解:**
+
+- 为什么不直接透传 OpenAI chunk(版本兼容、多 Provider 统一、敏感字段过滤)
+- SSE vs WebSocket vs HTTP Streaming 选型(Chat 场景 SSE 几乎总是首选)
+
+---
+
+### 1-9 生产级容错与可观测【必学】
+
+**学习重点:**
+
+- 重试策略:`tenacity` / SDK 内置 `max_retries`,区分可重试错误(429 / 5xx / 网络)与不可重试(400 / 401)
+- 指数退避 + 抖动(jitter)
+- 超时分层:连接超时 / 读取超时 / 整体超时
+- **Circuit Breaker(断路器,`pybreaker` / 自实现)**:连续失败 N 次后短路一段时间,避免对故障 Provider 持续打请求
+- 限流:客户端令牌桶 / 服务端 Provider 的 RPM/TPM 限制
+- 多 Provider 降级:主模型失败 → 兜底模型
+- 结构化日志(`structlog` / `loguru`):请求 ID、模型、token 用量、耗时、错误码
+- 接入 Langfuse / Helicone / Phoenix 做 LLM 调用追踪(为阶段五打底)
+
+**理解:**
+
+- 重试策略不当会"成本爆炸"——失败也烧 token
+- **重试 vs 断路器的分工**:重试解决"偶发抖动",断路器解决"持续故障" —— 两者必须同时存在,只有重试会把故障 Provider 拖死自己
+- 可观测三件套:Logs / Metrics / Traces 在 LLM 场景的对应
+
+---
+
+### 阶段实战项目
+
+**《支持多模型、多 Provider 的流式 AI 聊天网关》**
+
+- FastAPI + SSE 流式输出
+- 通过 `litellm` 或自研抽象层支持 OpenAI / DeepSeek / Qwen / 本地 vLLM
+- 支持工具调用循环
+- 支持推理模型 `reasoning_content` 流式分离展示
+- 自定义 SSE 事件协议,前端按事件类型分别渲染
+- Pydantic 严格结构化输出 demo
+- 接入 Langfuse 做调用追踪
+- 带重试、超时、断路器、降级、限流

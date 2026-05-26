@@ -1,3 +1,5 @@
 {
-  "showLineNumber": false
+  "showLineNumber": false,
+  "promptDelete": false,
+  "alwaysUpdateLinks": true
 }
