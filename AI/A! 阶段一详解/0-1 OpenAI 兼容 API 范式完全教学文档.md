@@ -591,17 +591,17 @@ Claude 有自己的原生 API（`/v1/messages`），字段略有不同。但 Ant
 
 ## 九、常见参数速查
 
-|参数                 |类型           |作用                       |
-|-------------------|-------------|-------------------------|
-|`temperature`      |float 0-2    |控制随机性。0=确定性输出，1=正常，>1=更随机|
-|`top_p`            |float 0-1    |核采样。与 temperature 二选一使用  |
-|`max_tokens`       |int          |限制生成的最大 token 数          |
-|`n`                |int          |同时生成 n 个候选回复             |
-|`stop`             |string/array |遇到指定字符串立即停止生成            |
-|`presence_penalty` |float -2 to 2|正值惩罚已出现的 token，减少重复      |
-|`frequency_penalty`|float -2 to 2|正值降低高频 token 的概率，增加多样性   |
-|`seed`             |int          |指定随机种子，相同 seed 输出更稳定（可复现）|
-|`logprobs`         |bool         |返回 token 的对数概率（用于评估模型置信度）|
+| 参数                  | 类型            | 作用                        |
+| ------------------- | ------------- | ------------------------- |
+| `temperature`       | float 0-2     | 控制随机性。0=确定性输出，1=正常，>1=更随机 |
+| `top_p`             | float 0-1     | 核采样。与 temperature 二选一使用   |
+| `max_tokens`        | int           | 限制生成的最大 token 数           |
+| `n`                 | int           | 同时生成 n 个候选回复              |
+| `stop`              | string/array  | 遇到指定字符串立即停止生成             |
+| `presence_penalty`  | float -2 to 2 | 正值惩罚已出现的 token，减少重复       |
+| `frequency_penalty` | float -2 to 2 | 正值降低高频 token 的概率，增加多样性    |
+| `seed`              | int           | 指定随机种子，相同 seed 输出更稳定（可复现） |
+| `logprobs`          | bool          | 返回 token 的对数概率（用于评估模型置信度） |
 
 -----
 
