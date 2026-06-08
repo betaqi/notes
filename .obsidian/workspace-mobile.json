@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AI/01.阶段一：AI 模型生态与推理基础设施.md",
-                "mode": "preview",
+                "file": "AI/基础/计算机底层进阶：从 Bit 到大模型的显存图解教程.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01.阶段一：AI 模型生态与推理基础设施"
+              "title": "计算机底层进阶：从 Bit 到大模型的显存图解教程"
             }
           }
         ],
@@ -141,7 +141,7 @@
         "state": {
           "type": "backlink",
           "state": {
-            "file": "AI/02.阶段二：大模型原生 API 激活与 FastAPI 极速入门.md",
+            "file": "AI/基础/计算机底层进阶：从 Bit 到大模型的显存图解教程.md",
             "collapseAll": true,
             "extraContext": true,
             "sortOrder": "alphabetical",
@@ -199,9 +199,17 @@
   },
   "active": "bee668874ba4f637",
   "lastOpenFiles": [
+    "AI/基础/网络协议基础笔记.md",
+    "未命名.md",
+    "AI/基础/计算机底层进阶：从 Bit 到大模型的显存图解教程.md",
+    "AI/基础/AI 模型入门完全指南(2026 版).md",
+    "AI/01.阶段一：AI 模型生态与推理基础设施.md",
+    "AI/AI 模型入门完全指南(2026 版).md",
+    "AI/基础/微调(LoRA QLoRA).md",
+    "AI/基础",
+    "AI/从底层硬件到大模型落地：计算机数据类型全解手册.md",
     "AI/A! 阶段一详解/0-2 模型仓库与发布生态完全教学文档.md",
     "AI/02.阶段二：大模型原生 API 激活与 FastAPI 极速入门.md",
-    "AI/01.阶段一：AI 模型生态与推理基础设施.md",
     "AI/A! 阶段一详解/0-3 模型下载与本地管理完全教学文档.md",
     "0-1 OpenAI 兼容 API 范式（必学）.md",
     "OpenAI 兼容 API 范式完全教学文档.md",
@@ -219,14 +227,7 @@
     "秘籍/📚 前端二进制体系全景笔记.md",
     "秘籍/0.前端三面通关秘籍.md",
     "秘籍/1. 🧠 浏览器多线程与事件循环机制详解.md",
-    "秘籍/工程化.md",
-    "秘籍/前端面试复习 — CSS JS 基础与性能优化口述版.md",
-    "秘籍/手写.md",
-    "秘籍/未命名.md",
-    "访谈心得.md",
-    "nuxt/组件生命周期钩子.md",
     "nuxt",
-    "README.md",
     "three.js",
     "Java",
     "cursor",
